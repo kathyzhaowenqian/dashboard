@@ -16,8 +16,11 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN mkdir /anglissData
 COPY .  /anglissData
-
+RUN mkdir /static  
 WORKDIR /anglissData
 
 RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt 
-CMD python manage.py runserver 0.0.0.0:8000  
+#CMD python manage.py runserver 0.0.0.0:8000  
+RUN python manage.py collectstatic 
+
+CMD  uwsgi --ini  uwsgi.ini
