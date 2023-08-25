@@ -70,11 +70,11 @@ jobs:
         TARGET:  "/opt/anglissData"
         
         #跑一些脚本
- 	    SCRIPT_AFTER: |
-        docker compose -f /opt/anglissData/docker-compose.yml down
-        docker rm -f dashboard1
-        docker rmi registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
-        docker login --username=${{ secrets.ALIYUN_NAME }} registry.cn-shanghai.aliyuncs.com --password=${{ secrets.ALIYUN_PASSWORD }}
-        docker pull registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
+        SCRIPT_AFTER: |
+          docker compose -f /opt/anglissData/docker-compose.yml down
+          docker rm -f dashboard1
+          docker rmi registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
+          docker login --username=${{ secrets.ALIYUN_NAME }} registry.cn-shanghai.aliyuncs.com --password=${{ secrets.ALIYUN_PASSWORD }}
+          docker pull registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
 
-        docker compose -f /opt/anglissData/docker-compose.yml up -d
+          docker compose -f /opt/anglissData/docker-compose.yml up -d
