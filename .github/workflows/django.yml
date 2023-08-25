@@ -49,8 +49,8 @@ jobs:
         context: .
         push: true
         tags: registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
-        build-args: |  
-        	DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+        build-args: |
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
 
     #通过ssh登录服务器然后拷贝代码在指定文件夹，然后拉取镜像仓库里的镜像
     # 远程 ssh 连接 阿里云ecs 服务器并且部署
