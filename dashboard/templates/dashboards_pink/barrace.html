@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Race</title>
+</head>
+
+<body>
+    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+    <div style="background: url('/static/assets/img/adaiagua.png') no-repeat center; z-index: -1;">
+        <div id="main" style="width: 1200px;height:600px;"></div>
+    </div>
+
+
+    <script src="/static/js/flexible.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
+    <!-- 先引入jquery -->
+    <script src="/static/js/jquery.js"></script>
+    <script type="text/javascript"></script>
+
+
+</body>
+
+<script>
+    $(window).load(function () {
+
+
+        function getdata() {
+            let result = {}
+            $.ajax({
+                url: "/dashboard/salesdatadetail",
+                type: "get",
+                dataType: 'json',
+                async: false, //同步请求，不能异步，异步的话数据就同时出不来了
+                success: function (resp) {
+                    result = resp
+                }
+            });
+            return result
+        };
+
+        // 发送 ajax 获取数据
+        orgin_data = getdata().SalesmanComparebar_cumsum.SalesmanComparebar_race_cumsum.data
+        console.log("原始数据", orgin_data)
+
+        var sales_data = []
+        var name_list = []
+        orgin_data.forEach(element => {
+            sales_data.push((Object.values(element)[0]))
+            name_list.push(Object.keys(element)[0])
+        });
+
+        console.log("销售数据", sales_data)
+        console.log("姓名列表", name_list)
+        console.log("月份数", Object.keys(sales_data[0]).length)
+
+        // barrace 图
+        var myChart = echarts.init(document.getElementById('main'));
+        var option;
+        var data = [];
+
+        // 初始值数据 0 
+        sales_data.forEach(element => {
+            // data.push(Math.round(element['1']))
+            data.push(0)
+
+        });
+
+        //  把data 里第10个数据替换掉(shawn)，显示颜色
+        // data.splice(10, 1, {
+        //     value: 0, itemStyle: {
+        //         color:
+        //             new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        //                 { offset: 0, color: '#83bff6' },
+        //                 { offset: 0.5, color: '#188df0' },
+        //                 { offset: 1, color: '#188df0' }
+        //             ])
+        //     }
+        // })
+
+
+        //初始了一个option，数据是0，提供格式说明以及最开始的数据（option && myChart.setOption(option)的时候看到的数据）
+        option = {
+            xAxis: {
+                max: 'dataMax'
+            },
+            yAxis: {
+                type: 'category',
+                data: name_list,
+                inverse: true,
+                animationDuration: 300,
+                animationDurationUpdate: 300,
+                max: 15 // only the largest 3 bars will be displayed
+            },
+            series: [
+                {
+                    realtimeSort: true,
+                    name: 'X',
+                    type: 'bar',
+                    data: data, //是上述初始值data
+                    label: {
+                        show: true,
+                        position: 'right',
+                        valueAnimation: true
+                    },
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: '#83bff6' },
+                            { offset: 0.5, color: '#188df0' },
+                            { offset: 1, color: '#188df0' }
+                        ])
+                    },
+                }
+            ],
+            // backgroundColor:'#ffcc00',
+            legend: {
+                show: true
+            },
+            animationDuration: 0,
+            animationDurationUpdate: 10000,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear',
+            graphic: {
+                elements: [
+                    {
+                        type: 'text',
+                        right: 160,
+                        bottom: 60,
+                        style: {
+                            text: '1月', //初始从1月开始
+                            font: 'bolder 80px monospace',
+                            fill: 'rgba(100, 100, 100, 0.25)'
+                        },
+                        z: 100
+                    }
+                ]
+            }
+
+        };
+
+
+        var count = 1;
+        //这个回调函数run是后面settimeout 和 setinterval的时候才开始调用的
+        function run() {
+
+            // 狗子的作业， todo, 判断 时间12 ，应该是动态的，不是写死的
+            // 狗子的作业，todo,背景的时间线要完善，添加时间
+            if (count > Object.keys(sales_data[0]).length) {
+                return
+            }
+
+            data = []
+            //调出每个销售的按照count指明月份的数据
+            let value_index = count;
+            sales_data.forEach(element => {
+                data.push(Math.round(element[value_index.toString()]))
+
+            });
+
+            //  把shawn的数据单独取出来，是索引值为10 
+            // shawn_data = data[10]
+            // //  把data 里第10个数据替换掉，显示颜色
+            // data.splice(10, 1, {
+            //     value: shawn_data, itemStyle: {
+            //         color:
+            //             new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            //                 { offset: 0, color: '#83bff6' },
+            //                 { offset: 0.5, color: '#188df0' },
+            //                 { offset: 1, color: '#188df0' }
+            //             ])
+            //     }
+            // })
+
+            //重新定义option要把新数据丢进去
+            myChart.setOption({
+                series: [
+                    {
+                        type: 'bar',
+                        data: data
+                    }
+                ],
+                //添加背景中的数字
+                graphic: {
+                    elements: [
+                        {
+                            type: 'text',
+                            right: 160,
+                            bottom: 60,
+                            style: {
+                                text: count.toString() + '月',
+                                font: 'bolder 80px monospace',
+                                fill: 'rgba(100, 100, 100, 0.25)'
+                            },
+                            z: 100
+                        }
+                    ]
+                }
+            });
+
+            count++;
+        }
+
+
+        //延迟0秒后开始执行回调函数run
+        setTimeout(function () {
+            run();
+        }, 0);
+
+        //每隔10秒获取一次回调函数run
+        setInterval(function () {
+            run();
+        }, 10000);
+
+        option && myChart.setOption(option);
+
+
+
+    })
+</script>
+
+
+
+
+</html>
