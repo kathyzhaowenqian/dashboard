@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  dashboard:
+
+    image: registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
+    container_name: dashboard1
+
+    privileged: true
+    # 创建多少个副本，swarm集群用
+
+    ports:
+      - 8989:8000
+    restart: always
+
+    # 限制容器日志的大小
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" # 设置日志文件的最大大小为 10MB
+        max-file: "3"  
