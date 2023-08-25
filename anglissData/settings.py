@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'anglissData.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'anglissdata',
-        'USER': 'kathy',				 #mysql用户名
-        'PASSWORD':'83305136',			 #mysql密码
-        'HOST' : '47.100.100.241',		 #mysql的ip地址
-        'PORT': '13306'			     #mysql的端口号
+        'NAME':  os.environ.get('MYSQL_DATABASE_NAME'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD':os.environ.get('MYSQL_PASSWORD'),
+        'HOST' : os.environ.get('MYSQL_HOST'),
+        'PORT': os.environ.get('MYSQL_PORT') 
     }
 }
 

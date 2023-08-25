@@ -22,14 +22,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-   
-    - name: RunPIPTests
-      run: |
-         pip list
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -51,6 +43,13 @@ jobs:
         tags: registry.cn-shanghai.aliyuncs.com/pmrdjango/dashboard:0.1
         build-args: |
           DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          MYSQL_DATABASE_NAME=${{ secrets.MYSQL_DATABASE_NAME }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_HOST=${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT=${{ secrets.MYSQL_PORT }}
+
+
 
     #通过ssh登录服务器然后拷贝代码在指定文件夹，然后拉取镜像仓库里的镜像
     # 远程 ssh 连接 阿里云ecs 服务器并且部署
